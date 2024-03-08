@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import CustomButton from "../components/CustomButton";
 import Loading from "../components/Loading";
 import TextInput from "../components/TextInput";
+import { apiRequest } from "../utils";
 
 const ResetPassword = () => {
   const [errMsg, setErrMsg] = useState("");
@@ -17,7 +18,28 @@ const ResetPassword = () => {
     mode: "onChange",
   });
 
-  const onSubmit = async (data) => {};
+  const handleResetSubmit = async (data) => {
+    setIsSubmitting(true)
+
+    try {
+      const res = await apiRequest({
+        url: "/users/request-passwordreset",
+        data: data,
+        method: "POST",
+      });
+
+      if (res?.status === "failed") {
+        setErrMsg(res);
+      } else {
+        setErrMsg(res);
+      }
+
+      setIsSubmitting(false);
+    } catch ( error ) {
+      console.log(error)
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className='w-full h-[100vh] bg-bgColor flex items-center justify-center p-6'>
@@ -29,7 +51,7 @@ const ResetPassword = () => {
         </span>
 
         <form
-          onSubmit={handleSubmit(onsubmit)}
+          onSubmit={handleSubmit(handleResetSubmit)}
           className='py-4 flex flex-col gap-5'
         >
           <TextInput
